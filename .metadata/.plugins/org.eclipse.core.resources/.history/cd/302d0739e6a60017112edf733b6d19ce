@@ -1,0 +1,100 @@
+import java.util.*;
+
+class State extends GlobalSimulation{
+	
+	public int queueA = 0, queueB = 0, accumulated = 0, noMeasurements = 0, accumulatedB = 0;
+	
+	private EventList myEventList;
+	
+	Random slump = new Random();
+	
+	State(EventList x){
+		myEventList = x;
+	}
+	
+	private void InsertEvent(int event, double timeOfEvent){
+		myEventList.InsertEvent(event, timeOfEvent);
+	}
+	
+	
+	public void TreatEvent(Event x){
+		switch (x.eventType){
+			case ARRIVAL_A:
+				arrivalA();
+				break;
+			case ARRIVAL_B:
+
+				break;
+			case MEASURE:
+				measure();
+				break;
+		}
+	}
+	
+	private double generateMean(double mean){
+		return 2*mean*slump.nextDouble();
+	}
+	
+	private void arrivalA(){
+		if ((queueA + queueB) == 0){
+			InsertEvent(READY, time + 0.002, A);
+		}
+		
+		queueA++;
+		InsertEvent(ARRIVAL, time - (1.0/150)*Math.log(slump.nextDouble()), A);
+			
+	}
+	
+	private void arrivalB(){
+		if (queueB == 0){
+			InsertEvent(READY, time + 0.004, B);
+		}
+		queueB++;
+	}
+
+	
+	private void readyA(){
+		queueA--;
+		if(queueB > 0){
+			InsertEvent(READY, time + 0.004, B);
+		}
+		else if(queueA > 0){
+			InsertEvent(READY, time + 0.002, A);
+		}
+		
+		InsertEvent(ARRIVAL, time + 1, B);
+		
+	}
+	
+	private void readyB(){
+		queueB--;
+		
+		if(queueB > 0){
+			InsertEvent(READY, time + 0.004, B);
+		}
+		else if(queueA > 0){
+			InsertEvent(READY, time + 0.004, A);
+		}
+	}
+//	private void ready(){
+//		if (numberInQueueB > 0){
+//			numberInQueueB--;
+//			InsertEvent(READY, time + 0.004);
+//		}
+//		else{
+//			if(numberInQueueA > 0){
+//				numberInQueueA--;
+//				InsertEvent(READY, time + 0.002);
+//				InsertEvent(ARRIVAL_B, time + 1 + 0.002);
+//			}
+//		}
+//		
+//	}
+	
+	
+	private void measure(){
+		accumulated = accumulated + queueA + queueB;
+		noMeasurements++;
+		InsertEvent(MEASURE, time + 0.1, M);
+	}
+}

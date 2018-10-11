@@ -1,0 +1,4 @@
+public class GlobalSimulation{
+	public static final int ARRIVAL_A = 1, ARRIVAL_B = 2, READY = 3, MEASURE = 4;
+	public static double time = 0;
+}

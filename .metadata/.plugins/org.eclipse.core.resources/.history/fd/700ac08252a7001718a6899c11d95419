@@ -1,0 +1,134 @@
+package lab2;
+
+import java.util.*;
+import java.io.*;
+
+//Denna klass ärver Global så att man kan använda time och signalnamnen utan punktnotation
+
+
+public class MainSimulation extends Global{
+
+    public static void main(String[] args) throws IOException {
+
+    	//Signallistan startas och actSignal deklareras. actSignal är den senast utplockade signalen i huvudloopen nedan.
+
+    	Signal actSignal;
+    	new SignalList();
+    	
+    	double nextQueue = 0;
+    	Random slump = new Random();
+    	
+    	
+    	int queue1, queue2, queue3, queue4, queue5;
+    	//Här nedan skapas de processinstanser som behövs och parametrar i dem ges värden.
+
+    	QS Q1 = new QS();
+    	QS Q2 = new QS();
+    	QS Q3 = new QS();
+    	QS Q4 = new QS();
+    	QS Q5 = new QS();
+
+
+    	Gen Generator = new Gen();
+    	Generator.lambda = 45; //Generator ska generera nio kunder per sekund
+    	Generator.sendTo = Q1; //De genererade kunderna ska skickas till kösystemet QS
+
+    	//Här nedan skickas de första signalerna för att simuleringen ska komma igång.
+
+    	SignalList.SendSignal(READY, Generator, time);
+    	SignalList.SendSignal(MEASURE, Q1, time);
+    	SignalList.SendSignal(MEASURE, Q2, time);
+    	SignalList.SendSignal(MEASURE, Q3, time);
+    	SignalList.SendSignal(MEASURE, Q4, time);
+    	SignalList.SendSignal(MEASURE, Q5, time);
+
+    	// Detta är simuleringsloopen:
+
+    	
+    	//
+    	
+    	while (time < 100000){
+    		actSignal = SignalList.FetchSignal();
+    		time = actSignal.arrivalTime;
+    		actSignal.destination.TreatSignal(actSignal);
+    		
+    		
+    		//i
+//    		nextQueue = slump.nextDouble();
+//			
+//			if(nextQueue < 0.2){
+//				Generator.sendTo = Q1;
+//			}
+//			else if(nextQueue >= 0.2 && nextQueue < 0.4){
+//				Generator.sendTo = Q2;
+//			}
+//			else if(nextQueue >= 0.4 && nextQueue < 0.6){
+//				Generator.sendTo = Q3;
+//			}
+//			else if(nextQueue >= 0.6 && nextQueue < 0.8){
+//				Generator.sendTo = Q4;
+//			}
+//			else if(nextQueue >= 0.8 && nextQueue < 1.0){
+//				Generator.sendTo = Q5;
+//			}
+    		
+    		
+    		//ii
+    		if(nextQueue == 0){
+				Generator.sendTo = Q1;
+			}
+			else if(nextQueue == 1){
+				Generator.sendTo = Q2;
+			}
+			else if(nextQueue == 2){
+				Generator.sendTo = Q3;
+			}
+			else if(nextQueue == 3){
+				Generator.sendTo = Q4;
+			}
+			else if(nextQueue == 4){
+				Generator.sendTo = Q5;
+			}
+    		
+    		
+    		if (nextQueue <= 3){
+    			nextQueue++;
+    		}
+    		else{
+    			nextQueue = 0;
+    		}
+    		
+    		
+    		//iii
+//    		queue1 = Q1.numberInQueue;
+//    		queue2 = Q2.numberInQueue;
+//    		queue3 = Q3.numberInQueue;
+//    		queue4 = Q4.numberInQueue;
+//    		queue5 = Q5.numberInQueue;
+//    		
+//    		if(queue1 <= queue2 && queue1 <= queue3 && queue1 <= queue4 && queue1 <= queue5){
+//				Generator.sendTo = Q1;
+//			}
+//			else if(queue2 <= queue1 && queue2 <= queue3 && queue2 <= queue2 && queue2 <= queue5){
+//				Generator.sendTo = Q2;
+//			}
+//			else if(queue3 <= queue2 && queue3 <= queue2 && queue3 <= queue4 && queue3 <= queue5){
+//				Generator.sendTo = Q3;
+//			}
+//			else if(queue4 <= queue2 && queue4 <= queue3 && queue4 <= queue1 && queue4 <= queue5){
+//				Generator.sendTo = Q4;
+//			}
+//			else if(queue5 <= queue2 && queue5 <= queue3 && queue5 <= queue4 && queue5 <= queue1){
+//				Generator.sendTo = Q5;
+//			}
+    	}
+
+    	//Slutligen skrivs resultatet av simuleringen ut nedan:
+
+    	System.out.println("Medelantal kunder i kösystem: " + 1.0*Q1.accumulated/Q1.noMeasurements);
+    	System.out.println("Medelantal kunder i kösystem: " + 1.0*Q2.accumulated/Q2.noMeasurements);
+    	System.out.println("Medelantal kunder i kösystem: " + 1.0*Q3.accumulated/Q3.noMeasurements);
+    	System.out.println("Medelantal kunder i kösystem: " + 1.0*Q4.accumulated/Q4.noMeasurements);
+    	System.out.println("Medelantal kunder i kösystem: " + 1.0*Q5.accumulated/Q5.noMeasurements);
+    }
+}

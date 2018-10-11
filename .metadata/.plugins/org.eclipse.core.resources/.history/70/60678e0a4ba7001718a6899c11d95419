@@ -1,0 +1,46 @@
+package lab2;
+
+import java.util.*;
+import java.io.*;
+
+//Denna klass ärver Proc, det gör att man kan använda time och signalnamn utan punktnotation
+
+class Gen extends Proc{
+
+	//Slumptalsgeneratorn startas:
+	Random slump = new Random();
+	
+	public double nextQueue;
+
+	//Generatorn har två parametrar:
+	public Proc sendTo;    //Anger till vilken process de genererade kunderna ska skickas
+	public double lambda;  //Hur många per sekund som ska generas
+
+	//Här nedan anger man vad som ska göras när en signal kommer
+	public void TreatSignal(Signal x){
+		switch (x.signalType){
+			case READY:{
+				nextQueue = slump.nextDouble();
+				
+				if(nextQueue < 0.2){
+					SignalList.SendSignal(ARRIVAL, sendTo, time);
+				}
+				else if(nextQueue >= 0.2 && nextQueue < 0.4){
+					SignalList.SendSignal(ARRIVAL, sendTo, time);
+				}
+				else if(nextQueue >= 0.4 && nextQueue < 0.6){
+					SignalList.SendSignal(ARRIVAL, sendTo, time);
+				}
+				else if(nextQueue >= 0.6 && nextQueue < 0.8){
+					SignalList.SendSignal(ARRIVAL, sendTo, time);
+				}
+				else if(nextQueue >= 0.8 && nextQueue < 1.0){
+					SignalList.SendSignal(ARRIVAL, sendTo, time);
+				}
+				
+				
+				SignalList.SendSignal(READY, this, time + (2.0/lambda)*slump.nextDouble());}
+				break;
+		}
+	}
+}
